@@ -2,7 +2,6 @@
 
 	About: Multi-line message system
 	Author: ziggi
-	Thanks: KoczkaHUN for fix GetPlayerColor
 
 */
 
