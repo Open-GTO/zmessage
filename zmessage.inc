@@ -45,14 +45,22 @@ stock ZMsg_SendClientMessage(playerid, color, message[])
 	}
 
 	new
+		bool:is_packed,
 		result,
 		temp,
 		start_pos,
 		end_pos;
 
+	is_packed = message[0] > 255;
+
 	for (new i = 0; i < shifts_count; i++) {
 		start_pos = i * ZMSG_MAX_CHAT_LENGTH;
 		end_pos = (i + 1) * ZMSG_MAX_CHAT_LENGTH;
+
+		if (is_packed) {
+			start_pos /= 4;
+			end_pos /= 4;
+		}
 
 		temp = message[end_pos];
 		message[end_pos] = '\0';
@@ -93,14 +101,22 @@ stock ZMsg_SendClientMessageToAll(color, message[])
 	}
 
 	new
+		bool:is_packed,
 		result,
 		temp,
 		start_pos,
 		end_pos;
 
+	is_packed = message[0] > 255;
+
 	for (new i = 0; i < shifts_count; i++) {
 		start_pos = i * ZMSG_MAX_CHAT_LENGTH;
 		end_pos = (i + 1) * ZMSG_MAX_CHAT_LENGTH;
+
+		if (is_packed) {
+			start_pos /= 4;
+			end_pos /= 4;
+		}
 
 		temp = message[end_pos];
 		message[end_pos] = '\0';
@@ -141,14 +157,22 @@ stock ZMsg_SendPlayerMessageToPlayer(playerid, senderid, message[])
 	}
 
 	new
+		bool:is_packed,
 		result,
 		temp,
 		start_pos,
 		end_pos;
 
+	is_packed = message[0] > 255;
+
 	for (new i = 0; i < shifts_count; i++) {
 		start_pos = i * ZMSG_MAX_PLAYER_CHAT_LENGTH;
 		end_pos = (i + 1) * ZMSG_MAX_PLAYER_CHAT_LENGTH;
+
+		if (is_packed) {
+			start_pos /= 4;
+			end_pos /= 4;
+		}
 
 		temp = message[end_pos];
 		message[end_pos] = '\0';
@@ -193,14 +217,22 @@ stock ZMsg_SendPlayerMessageToAll(senderid, message[])
 	}
 
 	new
+		bool:is_packed,
 		result,
 		temp,
 		start_pos,
 		end_pos;
 
+	is_packed = message[0] > 255;
+
 	for (new i = 0; i < shifts_count; i++) {
 		start_pos = i * ZMSG_MAX_PLAYER_CHAT_LENGTH;
 		end_pos = (i + 1) * ZMSG_MAX_PLAYER_CHAT_LENGTH;
+
+		if (is_packed) {
+			start_pos /= 4;
+			end_pos /= 4;
+		}
 
 		temp = message[end_pos];
 		message[end_pos] = '\0';
