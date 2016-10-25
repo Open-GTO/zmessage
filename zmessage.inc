@@ -51,7 +51,7 @@ stock ZMsg_SendClientMessage(playerid, color, message[])
 		start_pos,
 		end_pos;
 
-	is_packed = message[0] > 255;
+	is_packed = message{0} != 0;
 
 	for (new i = 0; i < shifts_count; i++) {
 		start_pos = i * ZMSG_MAX_CHAT_LENGTH;
@@ -107,7 +107,7 @@ stock ZMsg_SendClientMessageToAll(color, message[])
 		start_pos,
 		end_pos;
 
-	is_packed = message[0] > 255;
+	is_packed = message{0} != 0;
 
 	for (new i = 0; i < shifts_count; i++) {
 		start_pos = i * ZMSG_MAX_CHAT_LENGTH;
@@ -163,7 +163,7 @@ stock ZMsg_SendPlayerMessageToPlayer(playerid, senderid, message[])
 		start_pos,
 		end_pos;
 
-	is_packed = message[0] > 255;
+	is_packed = message{0} != 0;
 
 	for (new i = 0; i < shifts_count; i++) {
 		start_pos = i * ZMSG_MAX_PLAYER_CHAT_LENGTH;
@@ -223,7 +223,7 @@ stock ZMsg_SendPlayerMessageToAll(senderid, message[])
 		start_pos,
 		end_pos;
 
-	is_packed = message[0] > 255;
+	is_packed = message{0} != 0;
 
 	for (new i = 0; i < shifts_count; i++) {
 		start_pos = i * ZMSG_MAX_PLAYER_CHAT_LENGTH;
