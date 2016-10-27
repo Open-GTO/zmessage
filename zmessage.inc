@@ -31,6 +31,24 @@
 	#define ZMSG_SEPARATORS_LIST ' '
 #endif
 
+#if !defined ZMSG_HYPHEN_END
+	#define ZMSG_HYPHEN_END   " ¬"
+#endif
+
+#if !defined ZMSG_HYPHEN_START
+	#define ZMSG_HYPHEN_START "» "
+#endif
+
+/*
+	Vars
+*/
+
+static const
+	g_zmsg_HyphenEnd[] = ZMSG_HYPHEN_END,
+	g_zmsg_HyphenEndLength = sizeof(g_zmsg_HyphenEnd) - 1,
+	g_zmsg_HyphenStart[] = ZMSG_HYPHEN_START,
+	g_zmsg_HyphenStartLength = sizeof(g_zmsg_HyphenStart) - 1;
+
 /*
 	Functions
 */
@@ -95,6 +113,47 @@ static stock Zmsg_ShiftEndPos(const message[], const pos, const bool:is_packed)
 	return result_pos;
 }
 
+static stock Zmsg_MakeString(dest[], const size = sizeof(dest), const src[],
+	const bool:is_packed, const length, const line, &spos, &epos,
+	const prefix[], const prefix_length, const postfix[], const postfix_length)
+{
+	static
+		temp[ZMSG_MAX_CHAT_LENGTH + 1];
+
+	dest[0] = '\0';
+
+	// get pos
+	spos = Zmsg_ShiftStartPos(src, epos, is_packed, length);
+	epos = spos + ZMSG_MAX_CHAT_LENGTH - postfix_length;
+
+	if (line != 0) {
+		epos -= prefix_length;
+	}
+
+	if (epos >= length) {
+		epos = length;
+	} else {
+		epos = Zmsg_ShiftEndPos(src, epos, is_packed);
+	}
+
+	// prefix
+	if (line != 0) {
+		strcat(dest, prefix, size);
+	}
+
+	// source
+	strmid(temp, src, spos, epos);
+	if (is_packed) {
+		temp{epos - spos} = '\0';
+	}
+	strcat(dest, temp, size);
+
+	// postfix
+	if (epos != length) {
+		strcat(dest, postfix, size);
+	}
+}
+
 /*
 	SendClientMessage
 */
@@ -111,45 +170,19 @@ stock ZMsg_SendClientMessage(playerid, color, message[])
 	new
 		bool:is_packed,
 		result,
-		temp,
-		temp_string[(ZMSG_MAX_CHAT_LENGTH + 1) char],
+		temp[ZMSG_MAX_CHAT_LENGTH + 1],
 		start_pos,
-		end_pos;
+		end_pos,
+		line;
 
 	is_packed = message{0} != 0;
 
-	while (end_pos <= length) {
-		// get pos
-		start_pos = Zmsg_ShiftStartPos(message, end_pos, is_packed, length);
-		end_pos = start_pos + ZMSG_MAX_CHAT_LENGTH;
-
-		if (is_packed) {
-			if (end_pos >= length) {
-				strmid(temp_string, message, start_pos, length);
-				return SendClientMessage(playerid, color, temp_string);
-			}
-
-			end_pos = Zmsg_ShiftEndPos(message, end_pos, is_packed);
-
-			// prepare string and print
-			strmid(temp_string, message, start_pos, end_pos);
-			temp_string{end_pos - start_pos} = '\0';
-			result = SendClientMessage(playerid, color, temp_string);
-		} else {
-			if (end_pos >= length) {
-				return SendClientMessage(playerid, color, message[start_pos]);
-			}
-
-			end_pos = Zmsg_ShiftEndPos(message, end_pos, is_packed);
-
-			// prepare string and print
-			temp = message[end_pos];
-			message[end_pos] = '\0';
-
-			result = SendClientMessage(playerid, color, message[start_pos]);
-
-			message[end_pos] = temp;
-		}
+	while (end_pos < length) {
+		Zmsg_MakeString(temp, sizeof(temp), message, is_packed, length, line,
+		                start_pos, end_pos, g_zmsg_HyphenStart, g_zmsg_HyphenStartLength,
+		                g_zmsg_HyphenEnd, g_zmsg_HyphenEndLength);
+		result = SendClientMessage(playerid, color, temp);
+		line++;
 	}
 	return result;
 }
@@ -177,45 +210,19 @@ stock ZMsg_SendClientMessageToAll(color, message[])
 	new
 		bool:is_packed,
 		result,
-		temp,
-		temp_string[(ZMSG_MAX_CHAT_LENGTH + 1) char],
+		temp[ZMSG_MAX_CHAT_LENGTH + 1],
 		start_pos,
-		end_pos;
+		end_pos,
+		line;
 
 	is_packed = message{0} != 0;
 
-	while (end_pos <= length) {
-		// get pos
-		start_pos = Zmsg_ShiftStartPos(message, end_pos, is_packed, length);
-		end_pos = start_pos + ZMSG_MAX_CHAT_LENGTH;
-
-		if (is_packed) {
-			if (end_pos >= length) {
-				strmid(temp_string, message, start_pos, length);
-				return SendClientMessageToAll(color, temp_string);
-			}
-
-			end_pos = Zmsg_ShiftEndPos(message, end_pos, is_packed);
-
-			// prepare string and print
-			strmid(temp_string, message, start_pos, end_pos);
-			temp_string{end_pos - start_pos} = '\0';
-			result = SendClientMessageToAll(color, temp_string);
-		} else {
-			if (end_pos >= length) {
-				return SendClientMessageToAll(color, message[start_pos]);
-			}
-
-			end_pos = Zmsg_ShiftEndPos(message, end_pos, is_packed);
-
-			// prepare string and print
-			temp = message[end_pos];
-			message[end_pos] = '\0';
-
-			result = SendClientMessageToAll(color, message[start_pos]);
-
-			message[end_pos] = temp;
-		}
+	while (end_pos < length) {
+		Zmsg_MakeString(temp, sizeof(temp), message, is_packed, length, line,
+		                start_pos, end_pos, g_zmsg_HyphenStart, g_zmsg_HyphenStartLength,
+		                g_zmsg_HyphenEnd, g_zmsg_HyphenEndLength);
+		result = SendClientMessageToAll(color, temp);
+		line++;
 	}
 	return result;
 }
@@ -243,54 +250,21 @@ stock ZMsg_SendPlayerMessageToPlayer(playerid, senderid, message[])
 	new
 		bool:is_packed,
 		result,
-		temp,
-		temp_string[(ZMSG_MAX_PLAYER_CHAT_LENGTH + 1) char],
+		temp[ZMSG_MAX_CHAT_LENGTH + 1],
 		start_pos,
 		end_pos,
 		line;
 
 	is_packed = message{0} != 0;
 
-	while (end_pos <= length) {
-		// get pos
-		start_pos = Zmsg_ShiftStartPos(message, end_pos, is_packed, length);
-		end_pos = start_pos + ZMSG_MAX_PLAYER_CHAT_LENGTH;
-
-		if (is_packed) {
-			if (end_pos >= length) {
-				strmid(temp_string, message, start_pos, length);
-				return SendClientMessage(playerid, -1, temp_string);
-			}
-
-			end_pos = Zmsg_ShiftEndPos(message, end_pos, is_packed);
-
-			// prepare string and print
-			strmid(temp_string, message, start_pos, end_pos);
-			temp_string{end_pos - start_pos} = '\0';
-
-			if (line == 0) {
-				result = SendPlayerMessageToPlayer(playerid, senderid, temp_string);
-			} else {
-				SendClientMessage(playerid, -1, temp_string);
-			}
+	while (end_pos < length) {
+		Zmsg_MakeString(temp, sizeof(temp), message, is_packed, length, line,
+		                start_pos, end_pos, g_zmsg_HyphenStart, g_zmsg_HyphenStartLength,
+		                g_zmsg_HyphenEnd, g_zmsg_HyphenEndLength);
+		if (line == 0) {
+			result = SendPlayerMessageToPlayer(playerid, senderid, temp);
 		} else {
-			if (end_pos >= length) {
-				return SendClientMessage(playerid, -1, message[start_pos]);
-			}
-
-			end_pos = Zmsg_ShiftEndPos(message, end_pos, is_packed);
-
-			// prepare string and print
-			temp = message[end_pos];
-			message[end_pos] = '\0';
-
-			if (line == 0) {
-				result = SendPlayerMessageToPlayer(playerid, senderid, message[start_pos]);
-			} else {
-				SendClientMessage(playerid, -1, message[start_pos]);
-			}
-
-			message[end_pos] = temp;
+			SendClientMessage(playerid, -1, temp);
 		}
 		line++;
 	}
@@ -320,54 +294,21 @@ stock ZMsg_SendPlayerMessageToAll(senderid, message[])
 	new
 		bool:is_packed,
 		result,
-		temp,
-		temp_string[(ZMSG_MAX_PLAYER_CHAT_LENGTH + 1) char],
+		temp[ZMSG_MAX_CHAT_LENGTH + 1],
 		start_pos,
 		end_pos,
 		line;
 
 	is_packed = message{0} != 0;
 
-	while (end_pos <= length) {
-		// get pos
-		start_pos = Zmsg_ShiftStartPos(message, end_pos, is_packed, length);
-		end_pos = start_pos + ZMSG_MAX_PLAYER_CHAT_LENGTH;
-
-		if (is_packed) {
-			if (end_pos >= length) {
-				strmid(temp_string, message, start_pos, length);
-				return SendClientMessageToAll(senderid, temp_string);
-			}
-
-			end_pos = Zmsg_ShiftEndPos(message, end_pos, is_packed);
-
-			// prepare string and print
-			strmid(temp_string, message, start_pos, end_pos);
-			temp_string{end_pos - start_pos} = '\0';
-
-			if (line == 0) {
-				result = SendPlayerMessageToAll(senderid, temp_string);
-			} else {
-				SendClientMessageToAll(senderid, temp_string);
-			}
+	while (end_pos < length) {
+		Zmsg_MakeString(temp, sizeof(temp), message, is_packed, length, line,
+		                start_pos, end_pos, g_zmsg_HyphenStart, g_zmsg_HyphenStartLength,
+		                g_zmsg_HyphenEnd, g_zmsg_HyphenEndLength);
+		if (line == 0) {
+			result = SendPlayerMessageToAll(senderid, temp);
 		} else {
-			if (end_pos >= length) {
-				return SendClientMessageToAll(senderid, message[start_pos]);
-			}
-
-			end_pos = Zmsg_ShiftEndPos(message, end_pos, is_packed);
-
-			// prepare string and print
-			temp = message[end_pos];
-			message[end_pos] = '\0';
-
-			if (line == 0) {
-				result = SendPlayerMessageToAll(senderid, message[start_pos]);
-			} else {
-				SendClientMessageToAll(senderid, message[start_pos]);
-			}
-
-			message[end_pos] = temp;
+			SendClientMessageToAll(-1, temp);
 		}
 		line++;
 	}

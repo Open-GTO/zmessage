@@ -11,3 +11,5 @@ Directive | Default value | Can be redefined | Note
 ZMSG_MAX_CHAT_LENGTH | MAX_CHATBUBBLE_LENGTH | yes |
 ZMSG_MAX_PLAYER_CHAT_LENGTH | (MAX_CHATBUBBLE_LENGTH / 2) | yes |
 ZMSG_SEPARATORS_LIST | ' ' | yes | Used in `case` statement
+ZMSG_HYPHEN_END | " ¬" | yes |
+ZMSG_HYPHEN_START | "» " | yes |
