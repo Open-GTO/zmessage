@@ -6,7 +6,7 @@
 */
 
 #if !defined _samp_included
-	#error Please include a_samp or a_npc before zlang
+	#error Please include a_samp before zmessage
 #endif
 
 #if defined _zmsg_included
