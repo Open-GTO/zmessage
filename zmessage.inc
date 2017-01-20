@@ -80,7 +80,7 @@ static stock Zmsg_ShiftStartPos(const message[], const pos, const bool:is_packed
 			}
 		}
 	}
-	return result_pos;
+	return result_pos == size ? pos : result_pos;
 }
 
 static stock Zmsg_ShiftEndPos(const message[], const pos, const bool:is_packed)
@@ -110,7 +110,7 @@ static stock Zmsg_ShiftEndPos(const message[], const pos, const bool:is_packed)
 			}
 		}
 	}
-	return result_pos;
+	return result_pos == 0 ? pos : result_pos;
 }
 
 static stock Zmsg_MakeString(dest[], const size = sizeof(dest), const src[],
