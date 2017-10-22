@@ -114,7 +114,7 @@ static stock Zmsg_ShiftEndPos(const message[], const pos, const bool:is_packed)
 }
 
 static stock Zmsg_MakeString(dest[], const size = sizeof(dest), const src[],
-	const bool:is_packed, const length, const line, &spos, &epos,
+	const bool:is_packed, &last_color, const length, const line, &spos, &epos,
 	const prefix[], const prefix_length, const postfix[], const postfix_length)
 {
 	static
@@ -124,7 +124,7 @@ static stock Zmsg_MakeString(dest[], const size = sizeof(dest), const src[],
 
 	// get pos
 	spos = Zmsg_ShiftStartPos(src, epos, is_packed, length);
-	epos = spos + ZMSG_MAX_CHAT_LENGTH - postfix_length;
+	epos = spos + ZMSG_MAX_CHAT_LENGTH - postfix_length - (last_color != -1 ? 8 : 0);
 
 	if (line != 0) {
 		epos -= prefix_length;
@@ -136,8 +136,18 @@ static stock Zmsg_MakeString(dest[], const size = sizeof(dest), const src[],
 		epos = Zmsg_ShiftEndPos(src, epos, is_packed);
 	}
 
-	// prefix
+	// prefix and color
 	if (line != 0) {
+		// find and copy color
+		for (new i = spos; i != last_color; i--) {
+			if (src[i] == '}' && i - 7 >= 0 && src[i - 7] == '{') {
+				strmid(dest, src, i - 7, i + 1, size);
+				last_color = i - 1;
+				break;
+			}
+		}
+
+		// copy prefix
 		strcat(dest, prefix, size);
 	}
 
@@ -169,6 +179,7 @@ stock ZMsg_SendClientMessage(playerid, color, message[])
 
 	new
 		bool:is_packed,
+		last_color = -1,
 		result,
 		temp[ZMSG_MAX_CHAT_LENGTH + 1],
 		start_pos,
@@ -178,7 +189,7 @@ stock ZMsg_SendClientMessage(playerid, color, message[])
 	is_packed = message{0} != 0;
 
 	while (end_pos < length) {
-		Zmsg_MakeString(temp, sizeof(temp), message, is_packed, length, line,
+		Zmsg_MakeString(temp, sizeof(temp), message, is_packed, last_color, length, line,
 		                start_pos, end_pos, g_zmsg_HyphenStart, g_zmsg_HyphenStartLength,
 		                g_zmsg_HyphenEnd, g_zmsg_HyphenEndLength);
 		result = SendClientMessage(playerid, color, temp);
@@ -209,6 +220,7 @@ stock ZMsg_SendClientMessageToAll(color, message[])
 
 	new
 		bool:is_packed,
+		last_color = -1,
 		result,
 		temp[ZMSG_MAX_CHAT_LENGTH + 1],
 		start_pos,
@@ -218,7 +230,7 @@ stock ZMsg_SendClientMessageToAll(color, message[])
 	is_packed = message{0} != 0;
 
 	while (end_pos < length) {
-		Zmsg_MakeString(temp, sizeof(temp), message, is_packed, length, line,
+		Zmsg_MakeString(temp, sizeof(temp), message, is_packed, last_color, length, line,
 		                start_pos, end_pos, g_zmsg_HyphenStart, g_zmsg_HyphenStartLength,
 		                g_zmsg_HyphenEnd, g_zmsg_HyphenEndLength);
 		result = SendClientMessageToAll(color, temp);
@@ -249,6 +261,7 @@ stock ZMsg_SendPlayerMessageToPlayer(playerid, senderid, message[])
 
 	new
 		bool:is_packed,
+		last_color = -1,
 		result,
 		temp[ZMSG_MAX_CHAT_LENGTH + 1],
 		start_pos,
@@ -258,7 +271,7 @@ stock ZMsg_SendPlayerMessageToPlayer(playerid, senderid, message[])
 	is_packed = message{0} != 0;
 
 	while (end_pos < length) {
-		Zmsg_MakeString(temp, sizeof(temp), message, is_packed, length, line,
+		Zmsg_MakeString(temp, sizeof(temp), message, is_packed, last_color, length, line,
 		                start_pos, end_pos, g_zmsg_HyphenStart, g_zmsg_HyphenStartLength,
 		                g_zmsg_HyphenEnd, g_zmsg_HyphenEndLength);
 		if (line == 0) {
@@ -293,6 +306,7 @@ stock ZMsg_SendPlayerMessageToAll(senderid, message[])
 
 	new
 		bool:is_packed,
+		last_color = -1,
 		result,
 		temp[ZMSG_MAX_CHAT_LENGTH + 1],
 		start_pos,
@@ -302,7 +316,7 @@ stock ZMsg_SendPlayerMessageToAll(senderid, message[])
 	is_packed = message{0} != 0;
 
 	while (end_pos < length) {
-		Zmsg_MakeString(temp, sizeof(temp), message, is_packed, length, line,
+		Zmsg_MakeString(temp, sizeof(temp), message, is_packed, last_color, length, line,
 		                start_pos, end_pos, g_zmsg_HyphenStart, g_zmsg_HyphenStartLength,
 		                g_zmsg_HyphenEnd, g_zmsg_HyphenEndLength);
 		if (line == 0) {
