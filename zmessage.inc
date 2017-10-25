@@ -168,7 +168,7 @@ static stock Zmsg_MakeString(dest[], const size = sizeof(dest), const src[],
 	SendClientMessage
 */
 
-stock ZMsg_SendClientMessage(playerid, color, message[])
+stock ZMsg_SendClientMessage(playerid, color, const message[])
 {
 	new length = strlen(message);
 
@@ -209,7 +209,7 @@ stock ZMsg_SendClientMessage(playerid, color, message[])
 	SendClientMessageToAll
 */
 
-stock ZMsg_SendClientMessageToAll(color, message[])
+stock ZMsg_SendClientMessageToAll(color, const message[])
 {
 	new length = strlen(message);
 
@@ -250,7 +250,7 @@ stock ZMsg_SendClientMessageToAll(color, message[])
 	SendPlayerMessageToPlayer
 */
 
-stock ZMsg_SendPlayerMessageToPlayer(playerid, senderid, message[])
+stock ZMsg_SendPlayerMessageToPlayer(playerid, senderid, const message[])
 {
 	new length = strlen(message);
 
@@ -295,7 +295,7 @@ stock ZMsg_SendPlayerMessageToPlayer(playerid, senderid, message[])
 	SendPlayerMessageToAll
 */
 
-stock ZMsg_SendPlayerMessageToAll(senderid, message[])
+stock ZMsg_SendPlayerMessageToAll(senderid, const message[])
 {
 	new length = strlen(message);
 
