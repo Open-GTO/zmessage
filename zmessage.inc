@@ -133,7 +133,10 @@ static stock Zmsg_MakeString(dest[], const size = sizeof(dest), const src[],
 	if (epos >= length) {
 		epos = length;
 	} else {
-		epos = Zmsg_ShiftEndPos(src, epos, is_packed);
+		new shift_epos = Zmsg_ShiftEndPos(src, epos, is_packed);
+		if (shift_epos > spos) {
+			epos = shift_epos;
+		}
 	}
 
 	// prefix and color
