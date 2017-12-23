@@ -53,31 +53,33 @@ static const
 	Functions
 */
 
-stock ZMsg_GetMessages(const message[], array[][])
+stock ZMsg_GetMessages(message[], array[][], const lines = sizeof(array), const line_size = sizeof(array[]))
 {
-    new length = strlen(message);
+	new length = strlen(message);
 
-    // shouldn't be shifted
-    if (length <= ZMSG_MAX_CHAT_LENGTH) {
-        return strcat(array[0], message, ZMSG_MAX_CHAT_LENGTH + 1), 1;
-    }
+	// shouldn't be shifted
+	if (length <= line_size) {
+		array[0][0] = '\0';
+		strcat(array[0], message, line_size);
+		return 1;
+	}
 
-    new
-        bool:is_packed,
-        last_color = -1,
-        start_pos,
-        end_pos,
-        line;
+	new
+		bool:is_packed,
+		last_color = -1,
+		start_pos,
+		end_pos,
+		line;
 
-    is_packed = message{0} != 0;
+	is_packed = message{0} != 0;
 
-    while (end_pos < length) {
-        Zmsg_MakeString(array[line], ZMSG_MAX_CHAT_LENGTH + 1, message, is_packed, last_color, length, line,
-                        start_pos, end_pos, g_zmsg_HyphenStart, g_zmsg_HyphenStartLength,
-                        g_zmsg_HyphenEnd, g_zmsg_HyphenEndLength);
-        line++;
-    }
-    return line;
+	while (end_pos < length && line < lines) {
+		Zmsg_MakeString(array[line], line_size, message, is_packed, last_color, length, line,
+		                start_pos, end_pos, g_zmsg_HyphenStart, g_zmsg_HyphenStartLength,
+		                g_zmsg_HyphenEnd, g_zmsg_HyphenEndLength);
+		line++;
+	}
+	return line;
 }
 
 static stock Zmsg_ShiftStartPos(const message[], const pos, const bool:is_packed, const size = sizeof(message))
