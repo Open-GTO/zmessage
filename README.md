@@ -4,6 +4,18 @@ Multi-line messages with whole words shifts.
 # Usage
 Just include it.
 
+# Functions
+This library provides only one function with can be useful in [some cases](#5). Some examples of usage can be found [here](#6).
+
+##### ZMsg_GetMessages(message[], array[][], const lines = sizeof(array), const line_size = sizeof(array[]))
+> * **Parameters:**
+>   * `message[]`: The original message which should be splitted.
+>   * `array[][]`: The array which stores splitted strings.
+>   * `lines`: The number of the strings which can be stored in `array`.
+>   * `line_size`: The number of the symbols which can be stored in one `array` string.
+> * **Return values:**
+>   * The number of the lines
+
 # Directives
 
 Directive | Default value | Can be redefined | Note
