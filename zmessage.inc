@@ -53,6 +53,33 @@ static const
 	Functions
 */
 
+stock ZMsg_GetMessages(const message[], array[][])
+{
+    new length = strlen(message);
+
+    // shouldn't be shifted
+    if (length <= ZMSG_MAX_CHAT_LENGTH) {
+        return strcat(array[0], message, ZMSG_MAX_CHAT_LENGTH + 1), 1;
+    }
+
+    new
+        bool:is_packed,
+        last_color = -1,
+        start_pos,
+        end_pos,
+        line;
+
+    is_packed = message{0} != 0;
+
+    while (end_pos < length) {
+        Zmsg_MakeString(array[line], ZMSG_MAX_CHAT_LENGTH + 1, message, is_packed, last_color, length, line,
+                        start_pos, end_pos, g_zmsg_HyphenStart, g_zmsg_HyphenStartLength,
+                        g_zmsg_HyphenEnd, g_zmsg_HyphenEndLength);
+        line++;
+    }
+    return line;
+}
+
 static stock Zmsg_ShiftStartPos(const message[], const pos, const bool:is_packed, const size = sizeof(message))
 {
 	new result_pos = pos;
