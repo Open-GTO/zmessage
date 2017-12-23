@@ -5,9 +5,9 @@ Multi-line messages with whole words shifts.
 Just include it.
 
 # Functions
-This library provides only one function with can be useful in [some cases](#5). Some examples of usage can be found [here](#6).
+This library provides only one function with can be useful in [some cases](https://github.com/Open-GTO/zmessage/issues/5). Some examples of usage can be found [here](https://github.com/Open-GTO/zmessage/issues/6).
 
-##### ZMsg_GetMessages(message[], array[][], const lines = sizeof(array), const line_size = sizeof(array[]))
+#### ZMsg_GetMessages(message[], array[][], const lines = sizeof(array), const line_size = sizeof(array[]))
 > * **Parameters:**
 >   * `message[]`: The original message which should be splitted.
 >   * `array[][]`: The array which stores splitted strings.
