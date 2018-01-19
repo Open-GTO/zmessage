@@ -1,6 +1,4 @@
 {
-	"user": "ziggi",
-	"repo": "zmessage",
 	"entry": "test.pwn",
 	"output": "test.amx",
 	"dependencies": [
