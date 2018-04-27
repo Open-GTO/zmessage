@@ -153,7 +153,7 @@ static stock Zmsg_MakeString(dest[], const size = sizeof(dest), const src[],
 
 	// get pos
 	spos = Zmsg_ShiftStartPos(src, epos, is_packed, length);
-	epos = spos + ZMSG_MAX_CHAT_LENGTH - postfix_length - (last_color != -1 ? 8 : 0);
+	epos = spos + size - postfix_length - (last_color != -1 ? 8 : 0);
 
 	if (line != 0) {
 		epos -= prefix_length;
