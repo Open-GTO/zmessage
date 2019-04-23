@@ -53,7 +53,7 @@ static const
 	Functions
 */
 
-stock ZMsg_GetMessages(message[], array[][], const lines = sizeof(array), const line_size = sizeof(array[]))
+stock ZMsg_GetMessages(const message[], array[][], const lines = sizeof(array), const line_size = sizeof(array[]))
 {
 	new length = strlen(message);
 
