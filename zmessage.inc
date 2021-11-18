@@ -200,12 +200,12 @@ static stock Zmsg_MakeString(dest[], const size = sizeof(dest), const src[],
 	SendClientMessage
 */
 
-stock ZMsg_SendClientMessage(playerid, color, const message[])
+stock ZMsg_SendClientMessage(playerid, color, const message[], NeedMultiLine = true)
 {
 	new length = strlen(message);
 
 	// shouldn't be shifted
-	if (length <= ZMSG_MAX_CHAT_LENGTH) {
+	if (length <= ZMSG_MAX_CHAT_LENGTH || !NeedMultiLine) {
 		return SendClientMessage(playerid, color, message);
 	}
 
@@ -241,12 +241,12 @@ stock ZMsg_SendClientMessage(playerid, color, const message[])
 	SendClientMessageToAll
 */
 
-stock ZMsg_SendClientMessageToAll(color, const message[])
+stock ZMsg_SendClientMessageToAll(color, const message[], NeedMultiLine = true)
 {
 	new length = strlen(message);
 
 	// shouldn't be shifted
-	if (length <= ZMSG_MAX_CHAT_LENGTH) {
+	if (length <= ZMSG_MAX_CHAT_LENGTH || !NeedMultiLine) {
 		return SendClientMessageToAll(color, message);
 	}
 
@@ -282,12 +282,12 @@ stock ZMsg_SendClientMessageToAll(color, const message[])
 	SendPlayerMessageToPlayer
 */
 
-stock ZMsg_SendPlayerMessageToPlayer(playerid, senderid, const message[])
+stock ZMsg_SendPlayerMessageToPlayer(playerid, senderid, const message[], NeedMultiLine = true)
 {
 	new length = strlen(message);
 
 	// shouldn't be shifted
-	if (length <= ZMSG_MAX_PLAYER_CHAT_LENGTH) {
+	if (length <= ZMSG_MAX_PLAYER_CHAT_LENGTH || !NeedMultiLine) {
 		return SendPlayerMessageToPlayer(playerid, senderid, message);
 	}
 
@@ -327,12 +327,12 @@ stock ZMsg_SendPlayerMessageToPlayer(playerid, senderid, const message[])
 	SendPlayerMessageToAll
 */
 
-stock ZMsg_SendPlayerMessageToAll(senderid, const message[])
+stock ZMsg_SendPlayerMessageToAll(senderid, const message[], NeedMultiLine = true)
 {
 	new length = strlen(message);
 
 	// shouldn't be shifted
-	if (length <= ZMSG_MAX_PLAYER_CHAT_LENGTH) {
+	if (length <= ZMSG_MAX_PLAYER_CHAT_LENGTH || !NeedMultiLine) {
 		return SendPlayerMessageToAll(senderid, message);
 	}
 
